@@ -6,7 +6,6 @@
     <title>AQUA VS INFERNO Shards Calculation</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS for utility classes -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
 /* Custom styles for player cards */
@@ -62,8 +61,6 @@
     gap: 8px;
 }
 
-/* Removed .shard-icon styles as it's no longer an image */
-
 /* Responsive adjustments for cards */
 @media (max-width: 768px) {
     .player-cards-container {
@@ -71,7 +68,92 @@
         gap: 15px;
     }
 }
-        ```javascript
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AQUA VS INFERNO Shards Calculation</h1>
+        <div class="credit">Developed by: Afif Munir</div>
+    </div>
+
+    <div class="container">
+        <div class="card filter-section">
+            <h2>Filters</h2>
+            <div class="filter-group">
+                <label for="ovr-filter">OVR Filter:</label>
+                <select id="ovr-filter" class="w-full p-2 border border-gray-300 rounded-md">
+                    <option value="all">All</option>
+                    <option value="106">106</option>
+                    <option value="107">107</option>
+                    <option value="108">108</option>
+                    <option value="109">109</option>
+                    <option value="106-107">106-107</option>
+                    <option value="107-108">107-108</option>
+                    <option value="108-109">108-109</option>
+                    <option value="106-108">106-108</option>
+                    <option value="107-109">107-109</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="shard-filter">Max Shard Cost:</label>
+                <input type="range" id="shard-filter" min="0" max="1500" value="1500" step="100" class="w-full">
+                <span id="shard-value" class="block text-center mt-2 font-semibold">1500</span>
+            </div>
+        </div>
+
+        <div class="card filter-section">
+            <h2>Sorting</h2>
+            <div class="filter-group flex flex-col md:flex-row md:items-center gap-4">
+                <div class="w-full md:w-1/2">
+                    <label for="sort-by" class="block mb-1">Sort By:</label>
+                    <select id="sort-by" class="w-full p-2 border border-gray-300 rounded-md">
+                        <option value="name">Name</option>
+                        <option value="ovr">OVR</option>
+                        <option value="position">Position</option>
+                        <option value="shard-cost">Shard Cost</option>
+                        <option value="week">Week</option>
+                    </select>
+                </div>
+                <div class="w-full md:w-1/2">
+                    <label for="sort-order" class="block mb-1">Order:</label>
+                    <select id="sort-order" class="w-full p-2 border border-gray-300 rounded-md">
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="card preset-section">
+            <h2>Presets</h2>
+            <div class="filter-group">
+                <label for="preset-name" class="block mb-1">Preset Name:</label>
+                <input type="text" id="preset-name" placeholder="Enter preset name" class="w-full p-2 border border-gray-300 rounded-md mb-3">
+                <div class="preset-buttons flex flex-col md:flex-row gap-2">
+                    <button id="save-preset" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors flex-grow">Save Preset</button>
+                    <button id="load-preset" class="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition-colors flex-grow">Load Presets</button>
+                </div>
+            </div>
+            <div class="preset-list mt-4 border border-gray-200 rounded-md max-h-48 overflow-y-auto" id="preset-list">
+                </div>
+        </div>
+
+        <div class="card summary-section bg-blue-600 text-white p-5 rounded-lg shadow-md">
+            <h2 class="text-white border-b-2 border-white/50 pb-3 mb-4 text-xl">Summary</h2>
+            <div id="summary-info" class="flex justify-between items-center text-lg">
+                <p>Total Players: <span id="total-players" class="font-bold text-yellow-300">17</span></p>
+                <p>Total Shard Cost: <span id="total-shards" class="font-bold text-yellow-300">0</span></p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Player Cards</h2>
+            <div id="player-cards-container" class="player-cards-container">
+                </div>
+        </div>
+    </div>
+
+    <script>
 // Player data for AQUA VS INFERNO event
 const players = [
     { no: 1, week: "", name: "Pele", ovr: 109, position: "ST", shardCost: 1500, imageUrl: "https://i.ibb.co/svjqyq7p/Pel-109.png" },
@@ -377,3 +459,6 @@ window.addEventListener('load', () => {
     loadPresets();
     updateDisplay(); // Initial render of cards
 });
+    </script>
+</body>
+</html>
