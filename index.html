@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Card Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #1a1a2e; /* Dark blue background */
+        }
+        .player-card {
+            background-color: #162447; /* Slightly lighter card color */
+            border: 1px solid #3f51b5;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            max-width: 300px;
+        }
+        .player-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(63, 81, 181, 0.4);
+        }
+        .player-info h3 {
+            color: #e0e0e0;
+        }
+        .player-info p {
+            color: #a7a9be;
+        }
+        .player-info span {
+            color: #ffffff;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="text-white flex items-center justify-center min-h-screen p-4">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        <div class="player-card shadow-lg">
+            <div class="bg-red-700/20">
+                <img src="https://i.ibb.co/svjqyq7p/Pel-109.png" alt="Pelé Player Card" class="w-full h-auto" onerror="this.onerror=null;this.src='https://placehold.co/300x375/7f1d1d/ffffff?text=Pelé';">
+            </div>
+            <div class="p-6 player-info">
+                <h3 class="text-2xl font-bold mb-4 border-b border-gray-600 pb-2">Pelé</h3>
+                <div class="space-y-3 text-lg">
+                    <p>OVR: <span class="text-green-400">109</span></p>
+                    <p>Position: <span>ST</span></p>
+                    <p>Shard Cost: <span class="text-yellow-400">1,500</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="player-card shadow-lg">
+             <div class="bg-blue-500/20">
+                <img src="https://i.ibb.co/hFGFBjdf/Cannavaro-109.png" alt="Cannavaro Player Card" class="w-full h-auto" onerror="this.onerror=null;this.src='https://placehold.co/300x375/1e40af/ffffff?text=Cannavaro';">
+            </div>
+            <div class="p-6 player-info">
+                <h3 class="text-2xl font-bold mb-4 border-b border-gray-600 pb-2">Cannavaro</h3>
+                <div class="space-y-3 text-lg">
+                    <p>OVR: <span class="text-green-400">109</span></p>
+                    <p>Position: <span>CB</span></p>
+                    <p>Shard Cost: <span class="text-yellow-400">1,000</span></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
