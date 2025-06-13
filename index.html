@@ -36,9 +36,9 @@
 
 .player-card-image {
     width: 100%;
-    height: auto;
-    max-height: 250px; /* Adjust as needed */
-    object-fit: cover;
+    /* Adjusted max-height to make images smaller */
+    max-height: 200px; /* Reduced from 250px to 200px */
+    object-fit: contain; /* Changed from 'cover' to 'contain' to ensure entire image is visible */
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
 }
@@ -66,6 +66,10 @@
     .player-cards-container {
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
         gap: 15px;
+    }
+    /* Further adjust image size for smaller screens if needed */
+    .player-card-image {
+        max-height: 150px; /* Even smaller on phones */
     }
 }
 
