@@ -202,7 +202,24 @@ const players = [
     { no: 14, week: 1, name: "Sane", ovr: 106, position: "RM", shardCost: 300, imageUrl: "https://i.ibb.co/4HMfT5K/San-106.png" },
     { no: 15, week: 1, name: "McGregor", ovr: 106, position: "CDM", shardCost: 200, imageUrl: "https://i.ibb.co/NdY9Rvr6/Mc-Gregor-106.png" },
     { no: 16, week: 1, name: "Ugarte", ovr: 106, position: "CDM", shardCost: 200, imageUrl: "https://i.ibb.co/MxQpcmfQ/Ugarte-106.png" },
-    { no: 17, week: 1, name: "Romeny", ovr: 106, position: "ST", shardCost: 200, imageUrl: "https://i.ibb.co/21fqTywZ/Romeny-106.png" }
+    { no: 17, week: 1, name: "Romeny", ovr: 106, position: "ST", shardCost: 200, imageUrl: "https://i.ibb.co/21fqTywZ/Romeny-106.png" },
+    // Week 2 Players Added Here
+    { no: 18, week: 2, name: "Eusebio", ovr: 109, position: "ST", shardCost: 1500, imageUrl: "https://i.ibb.co/DPQMKKJY/Eusebio-109.png" },
+    { no: 19, week: 2, name: "Socrates", ovr: 108, position: "CAM", shardCost: 1000, imageUrl: "https://i.ibb.co/Ng80dLrY/Socrates-108.png" },
+    { no: 20, week: 2, name: "Van Persie", ovr: 108, position: "ST", shardCost: 650, imageUrl: "https://i.ibb.co/spxVS02n/Van-Persie-108.png" },
+    { no: 21, week: 2, name: "Stiller", ovr: 107, position: "CDM", shardCost: 300, imageUrl: "https://i.ibb.co/20TGX1wR/Stiller-107.png" },
+    { no: 22, week: 2, name: "Marcos Llorente", ovr: 108, position: "RB", shardCost: 650, imageUrl: "https://i.ibb.co/5hQpX26w/Marcos-Llorente-108.png" },
+    { no: 23, week: 2, name: "Bennacer", ovr: 106, position: "CDM", shardCost: 200, imageUrl: "https://i.ibb.co/h1C59nSq/Bennacer-106.png" },
+    { no: 24, week: 2, name: "De Vrij", ovr: 106, position: "CB", shardCost: 200, imageUrl: "https://i.ibb.co/7tQTrp6T/De-Vrij-106.png" },
+    { no: 25, week: 2, name: "Van Der Sar", ovr: 109, position: "GK", shardCost: 1500, imageUrl: "https://i.ibb.co/1f1LB8Ds/Van-Der-Sar-109.png" },
+    { no: 26, week: 2, name: "Hernandez", ovr: 109, position: "LB", shardCost: 1500, imageUrl: "https://i.ibb.co/ccdmBZGf/Hernandez-109.png" },
+    { no: 27, week: 2, name: "Hamsik", ovr: 108, position: "CM", shardCost: 800, imageUrl: "https://i.ibb.co/gbTdWyVT/Hamsik-108.png" },
+    { no: 28, week: 2, name: "Thuram", ovr: 107, position: "ST", shardCost: 450, imageUrl: "https://i.ibb.co/ZRhnnYhN/Thuram-107.png" },
+    { no: 29, week: 2, name: "Bernardo Silva", ovr: 107, position: "CM", shardCost: 300, imageUrl: "https://i.ibb.co/FkGn4TFs/Bernardo-Silva-107.png" },
+    { no: 30, week: 2, name: "Veerman", ovr: 106, position: "CM", shardCost: 200, imageUrl: "https://i.ibb.co/Cs3WMn8Q/Veerman-106.png" },
+    { no: 31, week: 2, name: "Dovbyk", ovr: 106, position: "ST", shardCost: 300, imageUrl: "https://i.ibb.co/wZ8K3Y0T/Dovbyk-106.png" },
+    { no: 32, week: 2, name: "Simeone", ovr: 106, position: "RW", shardCost: 200, imageUrl: "https://i.ibb.co/27xZ4WJQ/Simeone-106.png" },
+    { no: 33, week: 2, name: "Mastantuono", ovr: 106, position: "CAM", shardCost: 200, imageUrl: "https://i.ibb.co/v43c3HKv/Mastantuono-106.png" }
 ];
 
 // Position order for sorting
@@ -224,9 +241,9 @@ function renderPlayerCards(data) {
             <img src="${player.imageUrl}" alt="${player.name} Player Card" class="player-card-image"
                  onerror="this.onerror=null;this.src='https://placehold.co/300x375/CCCCCC/333333?text=Image+Not+Found';">
             <div class="player-card-info">
-                <p>
-                    <span>Shard: ${player.shardCost}</span>
-                </p>
+                <p><strong>${player.name}</strong> (${player.ovr} OVR | ${player.position})</p>
+                <p>Week: ${player.week !== "" ? player.week : "N/A"}</p>
+                <p>Shard Cost: ${player.shardCost}</p>
             </div>
         `;
         cardsContainer.appendChild(card);
