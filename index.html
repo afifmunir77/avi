@@ -31,433 +31,449 @@
 
 .player-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
 }
 
-.player-card img {
+.player-card-image {
     width: 100%;
-    height: auto;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    /* Adjusted max-height to make images smaller */
+    max-height: 200px; /* Reduced from 250px to 200px */
+    object-fit: contain; /* Changed from 'cover' to 'contain' to ensure entire image is visible */
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
 }
 
-.player-info {
+.player-card-info {
     padding: 15px;
     width: 100%;
+    background-color: #2a3a5a; /* Dark background for info */
+    color: white;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
 }
 
-.player-info h3 {
-    font-size: 1.4em;
-    margin-bottom: 8px;
-    color: var(--text-color);
-}
-
-.player-info p {
-    font-size: 1em;
-    color: var(--text-color);
-    margin-bottom: 5px;
-}
-
-/* Add custom styles for the search bar and filter controls */
-.search-filter-container {
-    padding: 20px;
-    background-color: var(--bg-color);
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-    align-items: center;
-}
-
-.search-filter-container input[type="text"],
-.search-filter-container select {
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background-color: var(--input-bg-color);
-    color: var(--text-color);
-    font-size: 1em;
-    min-width: 150px;
-}
-
-.search-filter-container label {
-    color: var(--text-color);
-    font-weight: 500;
-}
-
-/* Styles for the table header buttons */
-.sortable-header {
-    cursor: pointer;
-    text-decoration: underline;
-}
-
-/* Theme toggle switch */
-.theme-switch-wrapper {
+.player-card-info p {
+    margin: 5px 0;
+    font-size: 1.1rem;
     display: flex;
     align-items: center;
-    justify-content: flex-end; /* Align to the right */
-    padding: 10px 20px;
-    background-color: var(--bg-color);
-}
-
-.theme-switch {
-    display: inline-block;
-    height: 34px;
-    position: relative;
-    width: 60px;
-}
-
-.theme-switch input {
-    display: none;
-}
-
-.slider {
-    background-color: #ccc;
-    bottom: 0;
-    cursor: pointer;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-    transition: .4s;
-    border-radius: 34px;
-}
-
-.slider:before {
-    background-color: #fff;
-    bottom: 4px;
-    content: "";
-    height: 26px;
-    left: 4px;
-    position: absolute;
-    transition: .4s;
-    width: 26px;
-    border-radius: 50%;
-}
-
-input:checked + .slider {
-    background-color: #66bb6a;
-}
-
-input:checked + .slider:before {
-    transform: translateX(26px);
-}
-
-/* Rounded sliders */
-.slider.round {
-    border-radius: 34px;
-}
-
-.slider.round:before {
-    border-radius: 50%;
-}
-
-/* Preset buttons styling */
-.preset-buttons-container {
-    padding: 20px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
     justify-content: center;
-    background-color: var(--bg-color);
-    border-top: 1px solid var(--border-color);
+    gap: 8px;
 }
 
-.preset-buttons-container button {
-    padding: 10px 15px;
-    border-radius: 8px;
-    border: none;
-    background-color: var(--button-bg-color);
-    color: var(--button-text-color);
-    font-size: 1em;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+/* Responsive adjustments for cards */
+@media (max-width: 768px) {
+    .player-cards-container {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 15px;
+    }
+    /* Further adjust image size for smaller screens if needed */
+    .player-card-image {
+        max-height: 150px; /* Even smaller on phones */
+    }
 }
 
-.preset-buttons-container button:hover {
-    background-color: var(--button-hover-bg-color);
+/* --- NEW STYLES FOR HEADER AND CREDIT --- */
+.header {
+    background-color: #1a2a4a; /* A darker blue for the header background */
+    color: #ffffff; /* White text */
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    margin-bottom: 20px; /* Space below the header */
 }
 
-/* Theme variables */
-:root {
-    --bg-color: #f4f7f6;
-    --text-color: #333;
-    --card-color: #ffffff;
-    --border-color: #e0e0e0;
-    --input-bg-color: #fdfdfd;
-    --button-bg-color: #4CAF50;
-    --button-text-color: #ffffff;
-    --button-hover-bg-color: #45a049;
+.header h1 {
+    font-size: 2.5rem; /* Larger font size for the main title */
+    font-weight: 700; /* Bold */
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Subtle text shadow */
 }
 
-[data-theme="dark"] {
-    --bg-color: #2c2c2c;
-    --text-color: #e0e0e0;
-    --card-color: #3c3c3c;
-    --border-color: #444;
-    --input-bg-color: #3a3a3a;
-    --button-bg-color: #555;
-    --button-text-color: #e0e0e0;
-    --button-hover-bg-color: #666;
+.header .credit {
+    font-size: 1rem; /* Smaller font size for the credit */
+    font-weight: 300; /* Lighter font weight */
+    margin-top: 5px;
+    color: #cccccc; /* Slightly desaturated white for the credit */
 }
+/* --- END NEW STYLES --- */
+
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 min-h-screen">
-    <div class="theme-switch-wrapper">
-        <label class="theme-switch" for="checkbox">
-            <input type="checkbox" id="checkbox" />
-            <div class="slider round"></div>
-        </label>
+<body>
+    <div class="header">
+        <h1>AQUA VS INFERNO Shards Calculation</h1>
+        <div class="credit">Developed by: Afif Munir</div>
     </div>
 
-    <div class="container mx-auto p-4">
-        <h1 class="text-4xl font-bold text-center mb-8">AQUA VS INFERNO Shards Calculation</h1>
-
-        <div class="search-filter-container rounded-lg shadow-md mb-8">
-            <input type="text" id="search-bar" placeholder="Search by name..." class="flex-grow">
-            <select id="position-filter">
-                <option value="">All Positions</option>
-                <option value="RB">RB</option>
-                <option value="RW">RW</option>
-                <option value="LW">LW</option>
-                <option value="CAM">CAM</option>
-                <option value="ST">ST</option>
-                <option value="CM">CM</option>
-                <option value="CB">CB</option>
-                <option value="LB">LB</option>
-                <option value="CDM">CDM</option>
-            </select>
-            <select id="sort-by">
-                <option value="default">Sort By</option>
-                <option value="ovr">OVR</option>
-                <option value="position">Position</option>
-                <option value="shard-cost">Shard Cost</option>
-                <option value="week">Week</option>
-            </select>
-            <select id="sort-order">
-                <option value="asc">Ascending</option>
-                <option value="desc">Descending</option>
-            </select>
+    <div class="container">
+        <div class="card filter-section">
+            <h2>Filters</h2>
+            <div class="filter-group">
+                <label for="ovr-filter">OVR Filter:</label>
+                <select id="ovr-filter" class="w-full p-2 border border-gray-300 rounded-md">
+                    <option value="all">All</option>
+                    <option value="106">106</option>
+                    <option value="107">107</option>
+                    <option value="108">108</option>
+                    <option value="109">109</option>
+                    <option value="106-107">106-107</option>
+                    <option value="107-108">107-108</option>
+                    <option value="108-109">108-109</option>
+                    <option value="106-108">106-108</option>
+                    <option value="107-109">107-109</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="shard-filter">Max Shard Cost:</label>
+                <input type="range" id="shard-filter" min="0" max="1500" value="1500" step="100" class="w-full">
+                <span id="shard-value" class="block text-center mt-2 font-semibold">1500</span>
+            </div>
         </div>
 
-        <div class="preset-buttons-container">
-            <button id="save-preset">Save Current Filters as Preset</button>
-            <button id="load-preset">Load Saved Presets</button>
-            <select id="preset-select" class="hidden"></select>
+        <div class="card filter-section">
+            <h2>Sorting</h2>
+            <div class="filter-group flex flex-col md:flex-row md:items-center gap-4">
+                <div class="w-full md:w-1/2">
+                    <label for="sort-by" class="block mb-1">Sort By:</label>
+                    <select id="sort-by" class="w-full p-2 border border-gray-300 rounded-md">
+                        <option value="name">Name</option>
+                        <option value="ovr">OVR</option>
+                        <option value="position">Position</option>
+                        <option value="shard-cost">Shard Cost</option>
+                        <option value="week">Week</option>
+                    </select>
+                </div>
+                <div class="w-full md:w-1/2">
+                    <label for="sort-order" class="block mb-1">Order:</label>
+                    <select id="sort-order" class="w-full p-2 border border-gray-300 rounded-md">
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>
+                </div>
+            </div>
         </div>
 
-        <div id="player-cards-container" class="player-cards-container">
-            <!-- Player cards will be loaded here -->
+        <div class="card preset-section">
+            <h2>Presets</h2>
+            <div class="filter-group">
+                <label for="preset-name" class="block mb-1">Preset Name:</label>
+                <input type="text" id="preset-name" placeholder="Enter preset name" class="w-full p-2 border border-gray-300 rounded-md mb-3">
+                <div class="preset-buttons flex flex-col md:flex-row gap-2">
+                    <button id="save-preset" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors flex-grow">Save Preset</button>
+                    <button id="load-preset" class="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition-colors flex-grow">Load Presets</button>
+                </div>
+            </div>
+            <div class="preset-list mt-4 border border-gray-200 rounded-md max-h-48 overflow-y-auto" id="preset-list">
+                </div>
+        </div>
+
+        <div class="card summary-section bg-blue-600 text-white p-5 rounded-lg shadow-md">
+            <h2 class="text-white border-b-2 border-white/50 pb-3 mb-4 text-xl">Summary</h2>
+            <div id="summary-info" class="flex justify-between items-center text-lg">
+                <p>Total Players: <span id="total-players" class="font-bold text-yellow-300">17</span></p>
+                <p>Total Shard Cost: <span id="total-shards" class="font-bold text-yellow-300">0</span></p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Player Cards</h2>
+            <div id="player-cards-container" class="player-cards-container">
+                </div>
         </div>
     </div>
 
     <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const themeToggle = document.getElementById('checkbox');
-    const body = document.body;
-
-    // Load theme preference from local storage
-    if (localStorage.getItem('theme') === 'dark') {
-        body.setAttribute('data-theme', 'dark');
-        themeToggle.checked = true;
-    } else {
-        body.setAttribute('data-theme', 'light');
-        themeToggle.checked = false;
-    }
-
-    // Toggle theme on switch change
-    themeToggle.addEventListener('change', () => {
-        if (themeToggle.checked) {
-            body.setAttribute('data-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            body.setAttribute('data-theme', 'light');
-            localStorage.setItem('theme', 'light');
-        }
-    });
-});
-
+// Player data for AQUA VS INFERNO event
 const players = [
-    { id: 34, week: 3, name: 'Cafu', ovr: 109, position: 'RB', shardCost: 1500, image: 'https://i.ibb.co/n8scZ5kZ/Cafu-109.png' },
-    { id: 35, week: 3, name: 'Bale', ovr: 109, position: 'RW', shardCost: 1500, image: 'https://i.ibb.co/LhQ8zqZk/Bale-109.png' },
-    { id: 41, week: 3, name: 'Rivaldo', ovr: 109, position: 'LW', shardCost: 1000, image: 'https://i.ibb.co/tPcwpKsJ/Rivaldo-109.png' },
-    { id: 36, week: 3, name: 'Riquelme', ovr: 108, position: 'CAM', shardCost: 500, image: 'https://i.ibb.co/1tb50Cgx/Riquelme-108.png' },
-    { id: 37, week: 3, name: 'Marmoush', ovr: 108, position: 'ST', shardCost: 500, image: 'https://i.ibb.co/dJttPS45/Marmoush-108.png' },
-    { id: 42, week: 3, name: 'Scholes', ovr: 108, position: 'CM', shardCost: 500, image: 'https://i.ibb.co/pvsSJVcq/Scholes-108.png' },
-    { id: 43, week: 3, name: 'Campbell', ovr: 108, position: 'CB', shardCost: 650, image: 'https://i.ibb.co/Q7FvP49S/Campbell-108.png' },
-    { id: 38, week: 3, name: 'Diallo', ovr: 107, position: 'RW', shardCost: 450, image: 'https://i.ibb.co/KcMkfMbW/Diallo-107.png' },
-    { id: 39, week: 3, name: 'Gonçalo Inácio', ovr: 107, position: 'CB', shardCost: 300, image: 'https://i.ibb.co/QF1x3kLL/Gon-alo-In-cio-107.png' },
-    { id: 44, week: 3, name: 'Robertson', ovr: 107, position: 'LB', shardCost: 450, image: 'https://i.ibb.co/FbzymQwp/Robertson-107.png' },
-    { id: 45, week: 3, name: 'Guendouzi', ovr: 107, position: 'CM', shardCost: 450, image: 'https://i.ibb.co/Kc6DT2qF/Guendouzi-107.png' },
-    { id: 40, week: 3, name: 'Matic', ovr: 106, position: 'CDM', shardCost: 200, image: 'https://i.ibb.co/27LZH2vd/Mati-106.png' },
-    { id: 46, week: 3, name: 'Gakpo', ovr: 106, position: 'LW', shardCost: 200, image: 'https://i.ibb.co/cSwj7T0h/Gakpo-106.png' },
-    { id: 47, week: 3, name: 'Pavlović', ovr: 106, position: 'CDM', shardCost: 200, image: 'https://i.ibb.co/LdRHskJp/Pavlovi-106.png' },
-    { id: 48, week: 3, name: 'Yeray', ovr: 106, position: 'CB', shardCost: 200, image: 'https://i.ibb.co/RGVMQY99/Yeray-106.png' },
-    { id: 49, week: 3, name: 'Jackson', ovr: 106, position: 'ST', shardCost: 200, image: 'https://i.ibb.co/FLkHz5N7/Jackson-106.png' }
+    { no: 1, week: 1, name: "Pele", ovr: 109, position: "ST", shardCost: 1500, imageUrl: "https://i.ibb.co/svjqyq7p/Pel-109.png" },
+    { no: 2, week: 1, name: "Maradona", ovr: 109, position: "CAM", shardCost: 1500, imageUrl: "https://i.ibb.co/cKxDV6Sz/Maradona-109.png" },
+    { no: 3, week: 1, name: "Cannavaro", ovr: 109, position: "CB", shardCost: 1000, imageUrl: "https://i.ibb.co/hFGFBjdf/Cannavaro-109.png" },
+    { no: 4, week: 1, name: "Di Maria", ovr: 108, position: "CAM", shardCost: 800, imageUrl: "https://i.ibb.co/jP8vgX0X/Di-Mar-a-108.png" },
+    { no: 5, week: 1, name: "Hernandez", ovr: 108, position: "ST", shardCost: 500, imageUrl: "https://i.ibb.co/Y7r009sH/Hern-ndez-109.png" },
+    { no: 6, week: 1, name: "Matuidi", ovr: 108, position: "CDM", shardCost: 500, imageUrl: "https://i.ibb.co/FLMNKD8n/Matuidi-108.png" },
+    { no: 7, week: 1, name: "Fernandez", ovr: 107, position: "CM", shardCost: 450, imageUrl: "https://i.ibb.co/ZpZWV1Md/Fern-ndez-107.png" },
+    { no: 8, week: 1, name: "Kobel", ovr: 107, position: "GK", shardCost: 800, imageUrl: "https://i.ibb.co/XkdtkgNC/Kobel-107.png" },
+    { no: 9, week: 1, name: "Brandt", ovr: 107, position: "CAM", shardCost: 300, imageUrl: "https://i.ibb.co/v68zJBmc/Brandt-107.png" },
+    { no: 10, week: 1, name: "Jimenez", ovr: 106, position: "ST", shardCost: 200, imageUrl: "https://i.ibb.co/wZsz0zGn/Jim-nez-106.png" },
+    { no: 11, week: 1, name: "Bradley", ovr: 106, position: "RB", shardCost: 200, imageUrl: "https://i.ibb.co/svbZsNwN/Bradley-106.png" },
+    { no: 12, week: 1, name: "Martinez", ovr: 106, position: "CB", shardCost: 200, imageUrl: "https://i.ibb.co/KzQQvMq8/Mart-nez-106.png" },
+    { no: 13, week: 1, name: "Zaire-Emery", ovr: 106, position: "CM", shardCost: 200, imageUrl: "https://i.ibb.co/DgzWZ4f4/Za-re-Emery-106.png" },
+    { no: 14, week: 1, name: "Sane", ovr: 106, position: "RM", shardCost: 300, imageUrl: "https://i.ibb.co/4HMfT5K/San-106.png" },
+    { no: 15, week: 1, name: "McGregor", ovr: 106, position: "CDM", shardCost: 200, imageUrl: "https://i.ibb.co/NdY9Rvr6/Mc-Gregor-106.png" },
+    { no: 16, week: 1, name: "Ugarte", ovr: 106, position: "CDM", shardCost: 200, imageUrl: "https://i.ibb.co/MxQpcmfQ/Ugarte-106.png" },
+    { no: 17, week: 1, name: "Romeny", ovr: 106, position: "ST", shardCost: 200, imageUrl: "https://i.ibb.co/21fqTywZ/Romeny-106.png" },
+    // Week 2 Players Added Here
+    { no: 18, week: 2, name: "Eusebio", ovr: 109, position: "ST", shardCost: 1500, imageUrl: "https://i.ibb.co/DPQMKKJY/Eusebio-109.png" },
+    { no: 19, week: 2, name: "Socrates", ovr: 108, position: "CAM", shardCost: 1000, imageUrl: "https://i.ibb.co/Ng80dLrY/Socrates-108.png" },
+    { no: 20, week: 2, name: "Van Persie", ovr: 108, position: "ST", shardCost: 650, imageUrl: "https://i.ibb.co/spxVS02n/Van-Persie-108.png" },
+    { no: 21, week: 2, name: "Stiller", ovr: 107, position: "CDM", shardCost: 300, imageUrl: "https://i.ibb.co/20TGX1wR/Stiller-107.png" },
+    { no: 22, week: 2, name: "Marcos Llorente", ovr: 108, position: "RB", shardCost: 650, imageUrl: "https://i.ibb.co/5hQpX26w/Marcos-Llorente-108.png" },
+    { no: 23, week: 2, name: "Bennacer", ovr: 106, position: "CDM", shardCost: 200, imageUrl: "https://i.ibb.co/h1C59nSq/Bennacer-106.png" },
+    { no: 24, week: 2, name: "De Vrij", ovr: 106, position: "CB", shardCost: 200, imageUrl: "https://i.ibb.co/7tQTrp6T/De-Vrij-106.png" },
+    { no: 25, week: 2, name: "Van Der Sar", ovr: 109, position: "GK", shardCost: 1500, imageUrl: "https://i.ibb.co/1f1LB8Ds/Van-Der-Sar-109.png" },
+    { no: 26, week: 2, name: "Hernandez", ovr: 109, position: "LB", shardCost: 1500, imageUrl: "https://i.ibb.co/ccdmBZGf/Hernandez-109.png" },
+    { no: 27, week: 2, name: "Hamsik", ovr: 108, position: "CM", shardCost: 800, imageUrl: "https://i.ibb.co/gbTdWyVT/Hamsik-108.png" },
+    { no: 28, week: 2, name: "Thuram", ovr: 107, position: "ST", shardCost: 450, imageUrl: "https://i.ibb.co/ZRhnnYhN/Thuram-107.png" },
+    { no: 29, week: 2, name: "Bernardo Silva", ovr: 107, position: "CM", shardCost: 300, imageUrl: "https://i.ibb.co/FkGn4TFs/Bernardo-Silva-107.png" },
+    { no: 30, week: 2, name: "Veerman", ovr: 106, position: "CM", shardCost: 200, imageUrl: "https://i.ibb.co/Cs3WMn8Q/Veerman-106.png" },
+    { no: 31, week: 2, name: "Dovbyk", ovr: 106, position: "ST", shardCost: 300, imageUrl: "https://i.ibb.co/wZ8K3Y0T/Dovbyk-106.png" },
+    { no: 32, week: 2, name: "Simeone", ovr: 106, position: "RW", shardCost: 200, imageUrl: "https://i.ibb.co/27xZ4WJQ/Simeone-106.png" },
+    { no: 33, week: 2, name: "Mastantuono", ovr: 106, position: "CAM", shardCost: 200, imageUrl: "https://i.ibb.co/v43c3HKv/Mastantuono-106.png" },
+    // New Week 3 Players
+    { no: 34, week: 3, name: 'Cafu', ovr: 109, position: 'RB', shardCost: 1500, imageUrl: 'https://i.ibb.co/n8scZ5kZ/Cafu-109.png' },
+    { no: 35, week: 3, name: 'Bale', ovr: 109, position: 'RW', shardCost: 1500, imageUrl: 'https://i.ibb.co/LhQ8zqZk/Bale-109.png' },
+    { no: 41, week: 3, name: 'Rivaldo', ovr: 109, position: 'LW', shardCost: 1000, imageUrl: 'https://i.ibb.co/tPcwpKsJ/Rivaldo-109.png' },
+    { no: 36, week: 3, name: 'Riquelme', ovr: 108, position: 'CAM', shardCost: 500, imageUrl: 'https://i.ibb.co/1tb50Cgx/Riquelme-108.png' },
+    { no: 37, week: 3, name: 'Marmoush', ovr: 108, position: 'ST', shardCost: 500, imageUrl: 'https://i.ibb.co/dJttPS45/Marmoush-108.png' },
+    { no: 42, week: 3, name: 'Scholes', ovr: 108, position: 'CM', shardCost: 500, imageUrl: 'https://i.ibb.co/pvsSJVcq/Scholes-108.png' },
+    { no: 43, week: 3, name: 'Campbell', ovr: 108, position: 'CB', shardCost: 650, imageUrl: 'https://i.ibb.co/Q7FvP49S/Campbell-108.png' },
+    { no: 38, week: 3, name: 'Diallo', ovr: 107, position: 'RW', shardCost: 450, imageUrl: 'https://i.ibb.co/KcMkfMbW/Diallo-107.png' },
+    { no: 39, week: 3, name: 'Gonçalo Inácio', ovr: 107, position: 'CB', shardCost: 300, imageUrl: 'https://i.ibb.co/QF1x3kLL/Gon-alo-In-cio-107.png' },
+    { no: 44, week: 3, name: 'Robertson', ovr: 107, position: 'LB', shardCost: 450, imageUrl: 'https://i.ibb.co/FbzymQwp/Robertson-107.png' },
+    { no: 45, week: 3, name: 'Guendouzi', ovr: 107, position: 'CM', shardCost: 450, imageUrl: 'https://i.ibb.co/Kc6DT2qF/Guendouzi-107.png' },
+    { no: 40, week: 3, name: 'Matic', ovr: 106, position: 'CDM', shardCost: 200, imageUrl: 'https://i.ibb.co/27LZH2vd/Mati-106.png' },
+    { no: 46, week: 3, name: 'Gakpo', ovr: 106, position: 'LW', shardCost: 200, imageUrl: 'https://i.ibb.co/cSwj7T0h/Gakpo-106.png' },
+    { no: 47, week: 3, name: 'Pavlović', ovr: 106, position: 'CDM', shardCost: 200, imageUrl: 'https://i.ibb.co/LdRHskJp/Pavlovi-106.png' },
+    { no: 48, week: 3, name: 'Yeray', ovr: 106, position: 'CB', shardCost: 200, imageUrl: 'https://i.ibb.co/RGVMQY99/Yeray-106.png' },
+    { no: 49, week: 3, name: 'Jackson', ovr: 106, position: 'ST', shardCost: 200, imageUrl: 'https://i.ibb.co/FLkHz5N7/Jackson-106.png' }
 ];
 
-function createPlayerCard(player) {
-    const card = document.createElement('div');
-    card.className = 'player-card';
-    card.innerHTML = `
-        <img src="${player.image}" alt="${player.name}">
-        <div class="player-info">
-            <h3 class="font-semibold">${player.name}</h3>
-            <p class="font-bold text-lg p-2 rounded-md bg-green-200 dark:bg-green-700">${player.shardCost}</p>
-        </div>
-    `;
-    return card;
+// Position order for sorting
+const positionOrder = {
+    "GK": 1, "CB": 2, "LB": 3, "RB": 4, "CDM": 5, "CM": 6, "CAM": 7,
+    "LM": 8, "RM": 9, "ST": 10, "LW": 11, "RW": 12
+};
+
+// Function to render player cards
+function renderPlayerCards(data) {
+    const cardsContainer = document.getElementById('player-cards-container');
+    cardsContainer.innerHTML = ''; // Clear existing cards
+
+    data.forEach(player => {
+        const card = document.createElement('div');
+        card.className = 'player-card'; // Apply base card styling
+
+        card.innerHTML = `
+            <img src="${player.imageUrl}" alt="${player.name} Player Card" class="player-card-image"
+                 onerror="this.onerror=null;this.src='https://placehold.co/300x375/CCCCCC/333333?text=Image+Not+Found';">
+            <div class="player-card-info">
+                <p class="font-bold text-lg p-2 rounded-md bg-green-500 text-white">Shard: ${player.shardCost}</p>
+            </div>
+        `;
+        cardsContainer.appendChild(card);
+    });
+
+    updateSummary(data); // Update summary based on filtered/sorted data
 }
 
-function updateDisplay() {
-    const container = document.getElementById('player-cards-container');
-    container.innerHTML = ''; // Clear existing cards
+// Function to update summary information
+function updateSummary(data) {
+    document.getElementById('total-players').textContent = data.length;
+    const totalShards = data.reduce((sum, player) => sum + player.shardCost, 0);
+    document.getElementById('total-shards').textContent = totalShards.toLocaleString(); // Format with commas
+}
 
-    let filteredPlayers = [...players];
+// Function to filter players based on OVR and Shard Cost
+function filterPlayers() {
+    const ovrFilter = document.getElementById('ovr-filter').value;
+    const shardFilter = parseInt(document.getElementById('shard-filter').value);
 
-    // Search functionality
-    const searchTerm = document.getElementById('search-bar').value.toLowerCase();
-    if (searchTerm) {
-        filteredPlayers = filteredPlayers.filter(player =>
-            player.name.toLowerCase().includes(searchTerm)
-        );
+    let filteredPlayers = [...players]; // Start with a copy of all players
+
+    // Apply OVR filter
+    if (ovrFilter !== 'all') {
+        if (ovrFilter.includes('-')) {
+            const [min, max] = ovrFilter.split('-').map(Number);
+            filteredPlayers = filteredPlayers.filter(player => player.ovr >= min && player.ovr <= max);
+        } else {
+            const ovr = parseInt(ovrFilter);
+            filteredPlayers = filteredPlayers.filter(player => player.ovr === ovr);
+        }
     }
 
-    // Position filter
-    const positionFilter = document.getElementById('position-filter').value;
-    if (positionFilter) {
-        filteredPlayers = filteredPlayers.filter(player =>
-            player.position === positionFilter
-        );
-    }
+    // Apply Shard Cost filter
+    filteredPlayers = filteredPlayers.filter(player => player.shardCost <= shardFilter);
 
-    // Sorting
+    return filteredPlayers;
+}
+
+// Function to sort players
+function sortPlayers(data) {
     const sortBy = document.getElementById('sort-by').value;
     const sortOrder = document.getElementById('sort-order').value;
 
-    if (sortBy !== 'default') {
-        filteredPlayers.sort((a, b) => {
-            let valA, valB;
-            switch (sortBy) {
-                case 'ovr':
-                    valA = a.ovr;
-                    valB = b.ovr;
-                    break;
-                case 'position':
-                    valA = a.position;
-                    valB = b.position;
-                    break;
-                case 'shard-cost':
-                    valA = a.shardCost;
-                    valB = b.shardCost;
-                    break;
-                case 'week':
-                    valA = a.week;
-                    valB = b.week;
-                    break;
-                default:
-                    return 0;
-            }
+    return [...data].sort((a, b) => {
+        let comparison = 0;
 
-            if (typeof valA === 'string') {
-                return sortOrder === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
-            } else {
-                return sortOrder === 'asc' ? valA - valB : valB - valA;
-            }
-        });
-    }
+        if (sortBy === 'name') {
+            comparison = a.name.localeCompare(b.name);
+        } else if (sortBy === 'ovr') {
+            comparison = a.ovr - b.ovr;
+        } else if (sortBy === 'position') {
+            // Use predefined order for positions
+            const posA = positionOrder[a.position] || 99; // Default to high value if position not found
+            const posB = positionOrder[b.position] || 99;
+            comparison = posA - posB;
+        } else if (sortBy === 'shard-cost') {
+            comparison = a.shardCost - b.shardCost;
+        } else if (sortBy === 'week') {
+            // Handle empty week values for sorting, treating "" as lowest
+            const weekA = a.week !== "" ? a.week : -1;
+            const weekB = b.week !== "" ? b.week : -1;
+            comparison = weekA - weekB;
+        }
 
-    filteredPlayers.forEach(player => {
-        container.appendChild(createPlayerCard(player));
+        return sortOrder === 'asc' ? comparison : -comparison;
     });
 }
 
-// Save and Load Settings (Search, Filters, Sort)
+// Function to save current settings to localStorage
 function saveSettings() {
     const settings = {
-        searchTerm: document.getElementById('search-bar').value,
-        positionFilter: document.getElementById('position-filter').value,
+        ovrFilter: document.getElementById('ovr-filter').value,
+        shardFilter: document.getElementById('shard-filter').value,
         sortBy: document.getElementById('sort-by').value,
-        sortOrder: document.getElementById('sort-order').value,
+        sortOrder: document.getElementById('sort-order').value
     };
-    localStorage.setItem('playerCardSettings', JSON.stringify(settings));
+    localStorage.setItem('avsSettings', JSON.stringify(settings));
 }
 
+// Function to load settings from localStorage
 function loadSettings() {
-    const savedSettings = localStorage.getItem('playerCardSettings');
+    const savedSettings = localStorage.getItem('avsSettings');
     if (savedSettings) {
         const settings = JSON.parse(savedSettings);
-        document.getElementById('search-bar').value = settings.searchTerm || '';
-        document.getElementById('position-filter').value = settings.positionFilter || '';
-        document.getElementById('sort-by').value = settings.sortBy || 'default';
-        document.getElementById('sort-order').value = settings.sortOrder || 'asc';
+        document.getElementById('ovr-filter').value = settings.ovrFilter;
+        document.getElementById('shard-filter').value = settings.shardFilter;
+        document.getElementById('shard-value').textContent = settings.shardFilter;
+        document.getElementById('sort-by').value = settings.sortBy;
+        document.getElementById('sort-order').value = settings.sortOrder;
     }
 }
 
-// Preset functionality
+// Function to save a preset
 function savePreset() {
-    const presetName = prompt("Enter a name for this preset:");
-    if (presetName) {
-        const currentSettings = {
-            searchTerm: document.getElementById('search-bar').value,
-            positionFilter: document.getElementById('position-filter').value,
+    const presetNameInput = document.getElementById('preset-name');
+    const presetName = presetNameInput.value.trim();
+    if (!presetName) {
+        console.error('Please enter a preset name'); // Using console.error, replace with custom modal for production
+        return;
+    }
+
+    const preset = {
+        name: presetName,
+        settings: {
+            ovrFilter: document.getElementById('ovr-filter').value,
+            shardFilter: document.getElementById('shard-filter').value,
             sortBy: document.getElementById('sort-by').value,
-            sortOrder: document.getElementById('sort-order').value,
-        };
-        let presets = JSON.parse(localStorage.getItem('playerCardPresets') || '{}');
-        presets[presetName] = currentSettings;
-        localStorage.setItem('playerCardPresets', JSON.stringify(presets));
-        loadPresets(); // Refresh preset dropdown
-        alert(`Preset "${presetName}" saved!`);
-    }
-}
-
-function loadPresets() {
-    const presetSelect = document.getElementById('preset-select');
-    presetSelect.innerHTML = '<option value="">Load a Preset</option>'; // Clear existing options
-    const presets = JSON.parse(localStorage.getItem('playerCardPresets') || '{}');
-
-    if (Object.keys(presets).length > 0) {
-        presetSelect.classList.remove('hidden');
-        for (const name in presets) {
-            const option = document.createElement('option');
-            option.value = name;
-            option.textContent = name;
-            presetSelect.appendChild(option);
-        }
-    } else {
-        presetSelect.classList.add('hidden');
-    }
-
-    presetSelect.onchange = (event) => {
-        const selectedPresetName = event.target.value;
-        if (selectedPresetName) {
-            const preset = presets[selectedPresetName];
-            document.getElementById('search-bar').value = preset.searchTerm || '';
-            document.getElementById('position-filter').value = preset.positionFilter || '';
-            document.getElementById('sort-by').value = preset.sortBy || 'default';
-            document.getElementById('sort-order').value = preset.sortOrder || 'asc';
-            updateDisplay();
-            saveSettings();
+            sortOrder: document.getElementById('sort-order').value
         }
     };
+
+    let presets = JSON.parse(localStorage.getItem('avsPresets')) || [];
+    presets.push(preset);
+    localStorage.setItem('avsPresets', JSON.stringify(presets));
+
+    presetNameInput.value = ''; // Clear input field
+    loadPresets(); // Refresh preset list
 }
 
+// Function to load presets
+function loadPresets() {
+    const presetList = document.getElementById('preset-list');
+    presetList.innerHTML = '';
 
-// Event listeners for changes
-document.getElementById('search-bar').addEventListener('keyup', () => {
+    let presets = JSON.parse(localStorage.getItem('avsPresets')) || [];
+
+    // Sort presets alphabetically
+    presets.sort((a, b) => a.name.localeCompare(b.name));
+
+    if (presets.length === 0) {
+        presetList.innerHTML = '<p class="p-3 text-gray-500">No presets saved yet.</p>';
+        return;
+    }
+
+    presets.forEach((preset, index) => {
+        const presetItem = document.createElement('div');
+        presetItem.className = 'preset-item flex justify-between items-center p-3 border-b border-gray-200 last:border-b-0';
+        presetItem.innerHTML = `
+            <span class="font-medium text-gray-800">${preset.name}</span>
+            <div class="preset-actions flex gap-2">
+                <button class="load-preset-btn bg-green-500 text-white py-1 px-3 rounded-md hover:bg-green-600 transition-colors text-sm" data-name="${preset.name}">Load</button>
+                <button class="delete-preset-btn bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600 transition-colors text-sm" data-index="${index}">Delete</button>
+            </div>
+        `;
+        presetList.appendChild(presetItem);
+    });
+
+    // Add event listeners to load and delete buttons
+    document.querySelectorAll('.load-preset-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const presetName = this.getAttribute('data-name');
+            const presets = JSON.parse(localStorage.getItem('avsPresets')) || [];
+            const preset = presets.find(p => p.name === presetName);
+
+            if (preset) {
+                document.getElementById('ovr-filter').value = preset.settings.ovrFilter;
+                document.getElementById('shard-filter').value = preset.settings.shardFilter;
+                document.getElementById('shard-value').textContent = preset.settings.shardFilter;
+                document.getElementById('sort-by').value = preset.settings.sortBy;
+                document.getElementById('sort-order').value = preset.settings.sortOrder;
+
+                updateDisplay(); // Call updateDisplay to render cards
+                saveSettings();
+            }
+        });
+    });
+
+    document.querySelectorAll('.delete-preset-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            let presets = JSON.parse(localStorage.getItem('avsPresets')) || [];
+            presets.splice(index, 1);
+            localStorage.setItem('avsPresets', JSON.stringify(presets));
+            loadPresets(); // Reload presets after deletion
+        });
+    });
+}
+
+// Function to update the display (now renders cards)
+function updateDisplay() {
+    const filteredPlayers = filterPlayers();
+    const sortedPlayers = sortPlayers(filteredPlayers);
+    renderPlayerCards(sortedPlayers); // Render cards instead of table
+}
+
+// Event listeners for filters and sorting
+document.getElementById('ovr-filter').addEventListener('change', () => {
     updateDisplay();
     saveSettings();
 });
-document.getElementById('position-filter').addEventListener('change', () => {
+
+document.getElementById('shard-filter').addEventListener('input', function() {
+    document.getElementById('shard-value').textContent = this.value;
     updateDisplay();
     saveSettings();
 });
+
 document.getElementById('sort-by').addEventListener('change', () => {
     updateDisplay();
     saveSettings();
 });
+
 document.getElementById('sort-order').addEventListener('change', () => {
+    updateDisplay();
+    saveSettings();
+});
+
+// Event listeners for table headers (still present for consistency with sorting options)
+// Note: These event listeners are still present but will not directly impact the UI if the table headers
+// themselves are not visible or clickable. Their functionality is now mirrored by the select elements.
+document.getElementById('name-header')?.addEventListener('click', () => {
+    document.getElementById('sort-by').value = 'name';
+    const currentOrder = document.getElementById('sort-order').value;
+    document.getElementById('sort-order').value = currentOrder === 'asc' ? 'desc' : 'asc';
     updateDisplay();
     saveSettings();
 });
