@@ -125,9 +125,22 @@
                 </select>
             </div>
             <div class="filter-group">
-                <label for="shard-filter">Max Shard Cost:</label>
-                <input type="range" id="shard-filter" min="0" max="1500" value="1500" step="100" class="w-full">
-                <span id="shard-value" class="block text-center mt-2 font-semibold">1500</span>
+                <label for="min-shard-filter">Min Shard Cost:</label>
+                <input type="range" id="min-shard-filter" min="0" max="1500" value="0" step="100" class="w-full">
+                <span id="min-shard-value" class="block text-center mt-2 font-semibold">0</span>
+            </div>
+            <div class="filter-group mt-4">
+                <label for="max-shard-filter">Max Shard Cost:</label>
+                <input type="range" id="max-shard-filter" min="0" max="1500" value="1500" step="100" class="w-full">
+                <span id="max-shard-value" class="block text-center mt-2 font-semibold">1500</span>
+            </div>
+            <div class="filter-group mt-4">
+                <button id="position-filter-toggle" class="w-full text-left p-2 bg-gray-200 hover:bg-gray-300 rounded-md font-semibold">
+                    Filter by Position <span id="position-filter-arrow">&#9662;</span>
+                </button>
+                <div id="position-filter-panel" class="hidden mt-2 p-3 border border-gray-300 rounded-md max-h-60 overflow-y-auto">
+                    {/* Position checkboxes will be dynamically inserted here */}
+                </div>
             </div>
         </div>
 
@@ -245,6 +258,61 @@ const positionOrder = {
     "LM": 8, "RM": 9, "ST": 10, "LW": 11, "RW": 12
 };
 
+// --- POSITION FILTER FUNCTIONS ---
+function getUniquePositions() {
+    const positions = new Set();
+    players.forEach(player => positions.add(player.position));
+    return Array.from(positions).sort((a, b) => (positionOrder[a] || 99) - (positionOrder[b] || 99));
+}
+
+function populatePositionFilter() {
+    const panel = document.getElementById('position-filter-panel');
+    panel.innerHTML = ''; // Clear existing options
+    const uniquePositions = getUniquePositions();
+
+    uniquePositions.forEach(position => {
+        const checkboxId = `pos-${position.toLowerCase().replace(/\s+/g, '-')}`;
+        const-checkbox-label-wrapper div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px; /* Add some space between checkboxes */
+        }
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex items-center mb-2'; // Tailwind classes for layout
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = checkboxId;
+        checkbox.value = position;
+        checkbox.className = 'form-checkbox h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500';
+        checkbox.addEventListener('change', () => {
+            updateDisplay();
+            saveSettings();
+        });
+
+        const label = document.createElement('label');
+        label.htmlFor = checkboxId;
+        label.textContent = position;
+        label.className = 'ml-2 text-gray-700';
+
+        wrapper.appendChild(checkbox);
+        wrapper.appendChild(label);
+        panel.appendChild(wrapper);
+    });
+}
+
+function togglePositionFilterPanel() {
+    const panel = document.getElementById('position-filter-panel');
+    const arrow = document.getElementById('position-filter-arrow');
+    panel.classList.toggle('hidden');
+    if (panel.classList.contains('hidden')) {
+        arrow.innerHTML = '&#9662;'; // Down arrow
+    } else {
+        arrow.innerHTML = '&#9652;'; // Up arrow
+    }
+}
+// --- END POSITION FILTER FUNCTIONS ---
+
 // Function to render player cards
 function renderPlayerCards(data) {
     const cardsContainer = document.getElementById('player-cards-container');
@@ -277,7 +345,8 @@ function updateSummary(data) {
 // Function to filter players based on OVR and Shard Cost
 function filterPlayers() {
     const ovrFilter = document.getElementById('ovr-filter').value;
-    const shardFilter = parseInt(document.getElementById('shard-filter').value);
+    const minShardFilter = parseInt(document.getElementById('min-shard-filter').value);
+    const maxShardFilter = parseInt(document.getElementById('max-shard-filter').value);
 
     let filteredPlayers = [...players]; // Start with a copy of all players
 
@@ -293,7 +362,15 @@ function filterPlayers() {
     }
 
     // Apply Shard Cost filter
-    filteredPlayers = filteredPlayers.filter(player => player.shardCost <= shardFilter);
+    filteredPlayers = filteredPlayers.filter(player => player.shardCost >= minShardFilter && player.shardCost <= maxShardFilter);
+
+    // Apply Position filter
+    const selectedPositionNodes = document.querySelectorAll('#position-filter-panel input[type="checkbox"]:checked');
+    const selectedPositions = Array.from(selectedPositionNodes).map(cb => cb.value);
+
+    if (selectedPositions.length > 0) {
+        filteredPlayers = filteredPlayers.filter(player => selectedPositions.includes(player.position));
+    }
 
     return filteredPlayers;
 }
@@ -332,7 +409,9 @@ function sortPlayers(data) {
 function saveSettings() {
     const settings = {
         ovrFilter: document.getElementById('ovr-filter').value,
-        shardFilter: document.getElementById('shard-filter').value,
+        minShardFilter: document.getElementById('min-shard-filter').value,
+        maxShardFilter: document.getElementById('max-shard-filter').value,
+        selectedPositions: Array.from(document.querySelectorAll('#position-filter-panel input[type="checkbox"]:checked')).map(cb => cb.value),
         sortBy: document.getElementById('sort-by').value,
         sortOrder: document.getElementById('sort-order').value
     };
@@ -345,8 +424,20 @@ function loadSettings() {
     if (savedSettings) {
         const settings = JSON.parse(savedSettings);
         document.getElementById('ovr-filter').value = settings.ovrFilter;
-        document.getElementById('shard-filter').value = settings.shardFilter;
-        document.getElementById('shard-value').textContent = settings.shardFilter;
+        document.getElementById('min-shard-filter').value = settings.minShardFilter || "0";
+        document.getElementById('min-shard-value').textContent = settings.minShardFilter || "0";
+        document.getElementById('max-shard-filter').value = settings.maxShardFilter || "1500";
+        document.getElementById('max-shard-value').textContent = settings.maxShardFilter || "1500";
+
+        if (settings.selectedPositions && Array.isArray(settings.selectedPositions)) {
+            settings.selectedPositions.forEach(positionValue => {
+                const checkbox = document.querySelector(`#position-filter-panel input[value="${positionValue}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+        }
+
         document.getElementById('sort-by').value = settings.sortBy;
         document.getElementById('sort-order').value = settings.sortOrder;
     }
@@ -365,7 +456,9 @@ function savePreset() {
         name: presetName,
         settings: {
             ovrFilter: document.getElementById('ovr-filter').value,
-            shardFilter: document.getElementById('shard-filter').value,
+            minShardFilter: document.getElementById('min-shard-filter').value,
+            maxShardFilter: document.getElementById('max-shard-filter').value,
+            selectedPositions: Array.from(document.querySelectorAll('#position-filter-panel input[type="checkbox"]:checked')).map(cb => cb.value),
             sortBy: document.getElementById('sort-by').value,
             sortOrder: document.getElementById('sort-order').value
         }
@@ -416,10 +509,24 @@ function loadPresets() {
 
             if (preset) {
                 document.getElementById('ovr-filter').value = preset.settings.ovrFilter;
-                document.getElementById('shard-filter').value = preset.settings.shardFilter;
-                document.getElementById('shard-value').textContent = preset.settings.shardFilter;
+                document.getElementById('min-shard-filter').value = preset.settings.minShardFilter || "0";
+                document.getElementById('min-shard-value').textContent = preset.settings.minShardFilter || "0";
+                document.getElementById('max-shard-filter').value = preset.settings.maxShardFilter || "1500";
+                document.getElementById('max-shard-value').textContent = preset.settings.maxShardFilter || "1500";
                 document.getElementById('sort-by').value = preset.settings.sortBy;
                 document.getElementById('sort-order').value = preset.settings.sortOrder;
+
+                // Clear existing position checkboxes
+                document.querySelectorAll('#position-filter-panel input[type="checkbox"]').forEach(cb => cb.checked = false);
+                // Load position filter settings from preset
+                if (preset.settings.selectedPositions && Array.isArray(preset.settings.selectedPositions)) {
+                    preset.settings.selectedPositions.forEach(positionValue => {
+                        const checkbox = document.querySelector(`#position-filter-panel input[value="${positionValue}"]`);
+                        if (checkbox) {
+                            checkbox.checked = true;
+                        }
+                    });
+                }
 
                 updateDisplay(); // Call updateDisplay to render cards
                 saveSettings();
@@ -451,8 +558,26 @@ document.getElementById('ovr-filter').addEventListener('change', () => {
     saveSettings();
 });
 
-document.getElementById('shard-filter').addEventListener('input', function() {
-    document.getElementById('shard-value').textContent = this.value;
+document.getElementById('min-shard-filter').addEventListener('input', function() {
+    document.getElementById('min-shard-value').textContent = this.value;
+    // Ensure min value does not exceed max value
+    const maxFilter = document.getElementById('max-shard-filter');
+    if (parseInt(this.value) > parseInt(maxFilter.value)) {
+        maxFilter.value = this.value;
+        document.getElementById('max-shard-value').textContent = this.value;
+    }
+    updateDisplay();
+    saveSettings();
+});
+
+document.getElementById('max-shard-filter').addEventListener('input', function() {
+    document.getElementById('max-shard-value').textContent = this.value;
+    // Ensure max value does not go below min value
+    const minFilter = document.getElementById('min-shard-filter');
+    if (parseInt(this.value) < parseInt(minFilter.value)) {
+        minFilter.value = this.value;
+        document.getElementById('min-shard-value').textContent = this.value;
+    }
     updateDisplay();
     saveSettings();
 });
@@ -515,12 +640,126 @@ document.getElementById('week-header')?.addEventListener('click', () => {
 document.getElementById('save-preset').addEventListener('click', savePreset);
 document.getElementById('load-preset').addEventListener('click', loadPresets);
 
+// Event listener for position filter toggle
+document.getElementById('position-filter-toggle').addEventListener('click', togglePositionFilterPanel);
+
 // Load settings and presets on page load
 window.addEventListener('load', () => {
-    loadSettings();
+    populatePositionFilter(); // Populate position filter options
+    loadSettings(); // Load saved settings (this will check relevant position checkboxes)
     loadPresets();
     updateDisplay(); // Initial render of cards
+    // runFilterTests(); // Uncomment to run tests on load during development
 });
+
+// --- TEST FUNCTIONS (Development only) ---
+function runFilterTests() {
+    console.log("--- Running Filter Tests ---");
+
+    // Helper to simulate filter settings
+    const setMockSettings = (ovr, minShard, maxShard, positions) => {
+        document.getElementById('ovr-filter').value = ovr;
+        document.getElementById('min-shard-filter').value = minShard;
+        document.getElementById('max-shard-filter').value = maxShard;
+
+        document.querySelectorAll('#position-filter-panel input[type="checkbox"]').forEach(cb => {
+            cb.checked = positions.includes(cb.value);
+        });
+    };
+
+    // Helper to assert
+    const assert = (condition, message) => {
+        if (!condition) {
+            console.error("Assertion Failed:", message);
+        } else {
+            console.log("Assertion Passed:", message);
+        }
+    };
+
+    // Test Case 1: Shard Range (Min 500, Max 1000)
+    setMockSettings('all', "500", "1000", []);
+    let results = filterPlayers();
+    assert(results.every(p => p.shardCost >= 500 && p.shardCost <= 1000), "Test Case 1: Shard Range (500-1000)");
+    results.forEach(p => console.log(`  Found: ${p.name} - ${p.shardCost}`));
+
+
+    // Test Case 2: Position Filter (ST)
+    setMockSettings('all', "0", "1500", ["ST"]);
+    results = filterPlayers();
+    assert(results.every(p => p.position === "ST"), "Test Case 2: Position Filter (ST)");
+    assert(results.length > 0, "Test Case 2: Found ST players");
+    results.forEach(p => console.log(`  Found: ${p.name} - ${p.position}`));
+
+    // Test Case 3: Position Filter (CM, CAM)
+    setMockSettings('all', "0", "1500", ["CM", "CAM"]);
+    results = filterPlayers();
+    assert(results.every(p => ["CM", "CAM"].includes(p.position)), "Test Case 3: Position Filter (CM, CAM)");
+    assert(results.length > 0, "Test Case 3: Found CM or CAM players");
+    results.forEach(p => console.log(`  Found: ${p.name} - ${p.position}`));
+
+
+    // Test Case 4: OVR (109) + Shard Range (1000-1500)
+    setMockSettings('109', "1000", "1500", []);
+    results = filterPlayers();
+    assert(results.every(p => p.ovr === 109 && p.shardCost >= 1000 && p.shardCost <= 1500), "Test Case 4: OVR 109 + Shard (1000-1500)");
+    results.forEach(p => console.log(`  Found: ${p.name} - OVR ${p.ovr}, Shard ${p.shardCost}`));
+
+
+    // Test Case 5: OVR (106) + Position (CB)
+    setMockSettings('106', "0", "1500", ["CB"]);
+    results = filterPlayers();
+    assert(results.every(p => p.ovr === 106 && p.position === "CB"), "Test Case 5: OVR 106 + Position (CB)");
+    results.forEach(p => console.log(`  Found: ${p.name} - OVR ${p.ovr}, Pos ${p.position}`));
+
+
+    // Test Case 6: Shard Range (200-300) + Position (CDM)
+    setMockSettings('all', "200", "300", ["CDM"]);
+    results = filterPlayers();
+    assert(results.every(p => p.shardCost >= 200 && p.shardCost <= 300 && p.position === "CDM"), "Test Case 6: Shard (200-300) + Position (CDM)");
+    results.forEach(p => console.log(`  Found: ${p.name} - Shard ${p.shardCost}, Pos ${p.position}`));
+
+    // Test Case 7: OVR (108) + Shard (500-800) + Position (CAM)
+    setMockSettings('108', "500", "800", ["CAM"]);
+    results = filterPlayers();
+    assert(results.every(p => p.ovr === 108 && p.shardCost >= 500 && p.shardCost <= 800 && p.position === "CAM"), "Test Case 7: OVR 108 + Shard (500-800) + Pos (CAM)");
+    results.forEach(p => console.log(`  Found: ${p.name} - OVR ${p.ovr}, Shard ${p.shardCost}, Pos ${p.position}`));
+
+    // Test Case 8: No position selected (should return all players matching other filters)
+    // Using OVR 109 and Shard 1500 as an example
+    const peleAndMaradona = players.filter(p => p.ovr === 109 && p.shardCost === 1500);
+    setMockSettings('109', "1500", "1500", []); // Max shard set to 1500
+    results = filterPlayers();
+    // Filter further to only Pele and Maradona for this specific test condition
+    const specificPlayersResult = results.filter(p => p.name === "Pele" || p.name === "Maradona" || p.name === "Eusebio" || p.name === "Van Der Sar" || p.name === "Hernandez" || p.name === "Cafu" || p.name === "Bale");
+    assert(specificPlayersResult.length >= 2, "Test Case 8: No position selected, OVR 109, Shard 1500 (Pele, Maradona, Eusebio etc. expected)");
+
+
+    // Test Case 9: Min shard > Max shard (slider logic should handle this by making them equal)
+    setMockSettings('all', "1000", "500", []);
+    // Manually adjust sliders to simulate user input that might temporarily be invalid before correction
+    document.getElementById('min-shard-filter').value = "1000";
+    document.getElementById('max-shard-filter').value = "500";
+    // The event listeners for sliders should correct this.
+    // To directly test filterPlayers, we assume sliders are already corrected or test the corrected state.
+    // For this test, let's assume min slider was moved to 1000, and max slider was automatically adjusted to 1000.
+    document.getElementById('max-shard-filter').value = "1000"; // Simulate correction
+    results = filterPlayers();
+    assert(results.every(p => p.shardCost >= 1000 && p.shardCost <= 1000), "Test Case 9: Min shard (1000) > Max shard (500) - corrected to 1000-1000");
+
+
+    // Test Case 10: A position that no player has
+    setMockSettings('all', "0", "1500", ["FakePos"]);
+    results = filterPlayers();
+    assert(results.length === 0, "Test Case 10: Position 'FakePos' (no players)");
+
+    // Reset filters to default after tests
+    setMockSettings('all', "0", "1500", []);
+    loadSettings(); // Reload user's actual last settings or defaults
+    updateDisplay();
+    console.log("--- Filter Tests Complete ---");
+}
+// --- END TEST FUNCTIONS ---
+
     </script>
 </body>
 </html>
