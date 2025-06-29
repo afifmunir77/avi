@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
     <style>
 /* Custom styles for player cards */
 .player-cards-container {
@@ -98,6 +100,66 @@
 }
 /* --- END NEW STYLES --- */
 
+/* --- noUiSlider Styles --- */
+.noUi-target {
+    background: #FAFAFA;
+    border-radius: 4px;
+    border: 1px solid #D3D3D3;
+    box-shadow: inset 0 1px 1px #F0F0F0, 0 3px 6px -5px #BBB;
+}
+.noUi-connect {
+    background: #3B82F6; /* Tailwind blue-500 */
+    border-radius: 4px;
+    box-shadow: inset 0 0 3px rgba(51,51,51,0.45);
+}
+.noUi-handle {
+    border: 1px solid #D9D9D9;
+    border-radius: 3px;
+    background: #FFF;
+    cursor: default;
+    box-shadow: inset 0 0 1px #FFF,
+                inset 0 1px 7px #EBEBEB,
+                0 3px 6px -3px #BBB;
+}
+.noUi-handle:before,
+.noUi-handle:after {
+    content: "";
+    display: block;
+    position: absolute;
+    height: 14px;
+    width: 1px;
+    background: #E8E7E6;
+    left: 14px;
+    top: 6px;
+}
+.noUi-handle:after {
+    left: 17px;
+}
+/* --- End noUiSlider Styles --- */
+
+/* --- Player Pick Styles --- */
+.player-pick-card.selected {
+    border: 3px solid gold;
+    box-shadow: 0 0 10px gold;
+}
+.player-pick-card.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(50%);
+}
+.player-pick-card.disabled:hover {
+    transform: none; /* Prevent hover effect on disabled cards */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Reset box shadow from general hover */
+}
+
+/* Ensure player pick controls are spaced nicely if needed */
+#player-pick-controls .filter-group {
+    margin-bottom: 0.75rem; /* Tailwind's mb-3 */
+}
+#player-pick-controls .text-sm p {
+    margin-bottom: 0.25rem; /* Tailwind's mb-1 */
+}
+
     </style>
 </head>
 <body>
@@ -110,29 +172,20 @@
         <div class="card filter-section">
             <h2>Filters</h2>
             <div class="filter-group">
-                <label for="ovr-filter">OVR Filter:</label>
-                <select id="ovr-filter" class="w-full p-2 border border-gray-300 rounded-md">
-                    <option value="all">All</option>
-                    <option value="106">106</option>
-                    <option value="107">107</option>
-                    <option value="108">108</option>
-                    <option value="109">109</option>
-                    <option value="106-107">106-107</option>
-                    <option value="107-108">107-108</option>
-                    <option value="108-109">108-109</option>
-                    <option value="106-108">106-108</option>
-                    <option value="107-109">107-109</option>
-                </select>
+                <label for="ovr-slider" class="block mb-2">OVR Range:</label>
+                <div id="ovr-slider" class="mb-2"></div>
+                <div class="flex justify-between">
+                    <span id="min-ovr-value-display" class="text-sm font-semibold">106</span>
+                    <span id="max-ovr-value-display" class="text-sm font-semibold">109</span>
+                </div>
             </div>
             <div class="filter-group">
-                <label for="min-shard-filter">Min Shard Cost:</label>
-                <input type="range" id="min-shard-filter" min="0" max="1500" value="0" step="100" class="w-full">
-                <span id="min-shard-value" class="block text-center mt-2 font-semibold">0</span>
-            </div>
-            <div class="filter-group mt-4">
-                <label for="max-shard-filter">Max Shard Cost:</label>
-                <input type="range" id="max-shard-filter" min="0" max="1500" value="1500" step="100" class="w-full">
-                <span id="max-shard-value" class="block text-center mt-2 font-semibold">1500</span>
+                <label for="shard-cost-slider" class="block mb-2">Shard Cost Range:</label>
+                <div id="shard-cost-slider" class="mb-2"></div>
+                <div class="flex justify-between">
+                    <span id="min-shard-value-display" class="text-sm font-semibold">0</span>
+                    <span id="max-shard-value-display" class="text-sm font-semibold">1500</span>
+                </div>
             </div>
             <div class="filter-group mt-4">
                 <button id="position-filter-toggle" class="w-full text-left p-2 bg-gray-200 hover:bg-gray-300 rounded-md font-semibold">
@@ -140,6 +193,26 @@
                 </button>
                 <div id="position-filter-panel" class="hidden mt-2 p-3 border border-gray-300 rounded-md max-h-60 overflow-y-auto">
                     {/* Position checkboxes will be dynamically inserted here */}
+                </div>
+            </div>
+        </div>
+
+        <div class="card filter-section" id="player-pick-section">
+            <h2>Player Pick</h2>
+            <div class="filter-group">
+                <label for="player-pick-toggle" class="flex items-center cursor-pointer">
+                    <input type="checkbox" id="player-pick-toggle" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500">
+                    <span class="ml-2 text-gray-700">Enable Player Pick</span>
+                </label>
+            </div>
+            <div id="player-pick-controls" class="hidden mt-4 space-y-3">
+                <div class="filter-group">
+                    <label for="total-shards-input" class="block mb-1">Total Shards Available:</label>
+                    <input type="number" id="total-shards-input" placeholder="Enter total shards" class="w-full p-2 border border-gray-300 rounded-md">
+                </div>
+                <div class="text-sm">
+                    <p>Remaining Shards: <span id="remaining-shards-display" class="font-semibold">0</span></p>
+                    <p>Selected: <span id="selected-players-count" class="font-semibold">0</span> players, Cost: <span id="selected-players-cost" class="font-semibold">0</span></p>
                 </div>
             </div>
         </div>
@@ -316,6 +389,18 @@ function renderPlayerCards(data) {
     data.forEach(player => {
         const card = document.createElement('div');
         card.className = 'player-card'; // Apply base card styling
+        // Add player-pick specific classes for potential styling
+        if (playerPickActive) {
+            card.classList.add('player-pick-card');
+            const isSelected = selectedPlayers.some(p => p.no === player.no);
+            if (isSelected) {
+                card.classList.add('selected');
+            }
+            // Disable card if player cost is more than remaining shards and not already selected
+            if (!isSelected && player.shardCost > remainingShards) {
+                card.classList.add('disabled');
+            }
+        }
 
         card.innerHTML = `
             <img src="${player.imageUrl}" alt="${player.name} Player Card" class="player-card-image"
@@ -324,11 +409,57 @@ function renderPlayerCards(data) {
                 <p class="font-bold text-lg p-2 rounded-md bg-green-500 text-white">Shard: ${player.shardCost}</p>
             </div>
         `;
+
+        if (playerPickActive) {
+            card.addEventListener('click', () => handlePlayerCardClick(player, card));
+        }
         cardsContainer.appendChild(card);
     });
 
-    updateSummary(data); // Update summary based on filtered/sorted data
+    updateSummary(data); // Update summary based on filtered/sorted data (overall list)
+    updatePlayerPickSummary(); // Update summary specific to player pick selections
 }
+
+function handlePlayerCardClick(player, cardElement) {
+    if (!playerPickActive) return;
+
+    const playerIndex = selectedPlayers.findIndex(p => p.no === player.no);
+    const isSelected = playerIndex > -1;
+
+    if (isSelected) {
+        // Deselect player
+        selectedPlayers.splice(playerIndex, 1);
+        remainingShards += player.shardCost;
+        cardElement.classList.remove('selected');
+    } else {
+        // Select player
+        if (player.shardCost <= remainingShards) {
+            selectedPlayers.push(player);
+            remainingShards -= player.shardCost;
+            cardElement.classList.add('selected');
+        } else {
+            // Not enough shards, do nothing (or provide feedback)
+            console.log("Not enough shards to select " + player.name);
+            return;
+        }
+    }
+    // After selection/deselection, re-render to update disabled states and summary
+    updateDisplay();
+}
+
+function updatePlayerPickSummary() {
+    if (!playerPickActive) {
+        document.getElementById('remaining-shards-display').textContent = "0";
+        document.getElementById('selected-players-count').textContent = "0";
+        document.getElementById('selected-players-cost').textContent = "0";
+        return;
+    }
+    document.getElementById('remaining-shards-display').textContent = remainingShards.toLocaleString();
+    document.getElementById('selected-players-count').textContent = selectedPlayers.length;
+    const totalSelectedCost = selectedPlayers.reduce((sum, p) => sum + p.shardCost, 0);
+    document.getElementById('selected-players-cost').textContent = totalSelectedCost.toLocaleString();
+}
+
 
 // Function to update summary information
 function updateSummary(data) {
@@ -337,27 +468,107 @@ function updateSummary(data) {
     document.getElementById('total-shards').textContent = totalShards.toLocaleString(); // Format with commas
 }
 
+// --- Player Pick Global Variables ---
+let playerPickActive = false;
+let totalShardsAvailable = 0;
+let remainingShards = 0;
+let selectedPlayers = []; // Stores full player objects
+
+// --- Range Slider Initialization ---
+let shardCostSlider, ovrSlider;
+
+function initializeSliders() {
+    const allShardCosts = players.map(p => p.shardCost);
+    const minShard = Math.min(...allShardCosts);
+    const maxShard = Math.max(...allShardCosts);
+
+    const allOvrs = players.map(p => p.ovr);
+    const minOvr = Math.min(...allOvrs);
+    const maxOvr = Math.max(...allOvrs);
+
+    // Shard Cost Slider
+    const shardCostSliderElement = document.getElementById('shard-cost-slider');
+    shardCostSlider = noUiSlider.create(shardCostSliderElement, {
+        start: [minShard, maxShard],
+        connect: true,
+        step: 50, // Or any other appropriate step
+        range: {
+            'min': minShard,
+            'max': maxShard
+        },
+        format: {
+            to: value => Math.round(value),
+            from: value => Number(value)
+        }
+    });
+
+    const minShardValueDisplay = document.getElementById('min-shard-value-display');
+    const maxShardValueDisplay = document.getElementById('max-shard-value-display');
+
+    shardCostSlider.on('update', function (values, handle) {
+        minShardValueDisplay.textContent = values[0];
+        maxShardValueDisplay.textContent = values[1];
+        // updateDisplay and saveSettings will be called by a wrapper or directly if needed
+    });
+    shardCostSlider.on('change', function () { // 'change' event fires when user stops dragging
+        updateDisplay();
+        saveSettings();
+    });
+
+
+    // OVR Slider
+    const ovrSliderElement = document.getElementById('ovr-slider');
+    ovrSlider = noUiSlider.create(ovrSliderElement, {
+        start: [minOvr, maxOvr],
+        connect: true,
+        step: 1,
+        range: {
+            'min': minOvr,
+            'max': maxOvr
+        },
+        format: {
+            to: value => Math.round(value),
+            from: value => Number(value)
+        }
+    });
+
+    const minOvrValueDisplay = document.getElementById('min-ovr-value-display');
+    const maxOvrValueDisplay = document.getElementById('max-ovr-value-display');
+
+    ovrSlider.on('update', function (values, handle) {
+        minOvrValueDisplay.textContent = values[0];
+        maxOvrValueDisplay.textContent = values[1];
+    });
+    ovrSlider.on('change', function () {
+        updateDisplay();
+        saveSettings();
+    });
+
+    // Set initial display values
+    minShardValueDisplay.textContent = shardCostSlider.get()[0];
+    maxShardValueDisplay.textContent = shardCostSlider.get()[1];
+    minOvrValueDisplay.textContent = ovrSlider.get()[0];
+    maxOvrValueDisplay.textContent = ovrSlider.get()[1];
+}
+
+
 // Function to filter players based on OVR and Shard Cost
 function filterPlayers() {
-    const ovrFilter = document.getElementById('ovr-filter').value;
-    const minShardFilter = parseInt(document.getElementById('min-shard-filter').value);
-    const maxShardFilter = parseInt(document.getElementById('max-shard-filter').value);
-
     let filteredPlayers = [...players]; // Start with a copy of all players
 
-    // Apply OVR filter
-    if (ovrFilter !== 'all') {
-        if (ovrFilter.includes('-')) {
-            const [min, max] = ovrFilter.split('-').map(Number);
-            filteredPlayers = filteredPlayers.filter(player => player.ovr >= min && player.ovr <= max);
-        } else {
-            const ovr = parseInt(ovrFilter);
-            filteredPlayers = filteredPlayers.filter(player => player.ovr === ovr);
-        }
+    // Initial filter for Player Pick mode:
+    // If player pick is active and a total shard budget is set,
+    // initially filter out players more expensive than the total budget.
+    if (playerPickActive && totalShardsAvailable > 0) {
+        filteredPlayers = filteredPlayers.filter(player => player.shardCost <= totalShardsAvailable);
     }
 
-    // Apply Shard Cost filter
-    filteredPlayers = filteredPlayers.filter(player => player.shardCost >= minShardFilter && player.shardCost <= maxShardFilter);
+    // Then, apply regular filters (OVR, Shard Cost Range from sliders)
+    const [minOvr, maxOvr] = ovrSlider.get().map(Number);
+    const [minShard, maxShard] = shardCostSlider.get().map(Number);
+
+    filteredPlayers = filteredPlayers.filter(player => player.ovr >= minOvr && player.ovr <= maxOvr);
+    filteredPlayers = filteredPlayers.filter(player => player.shardCost >= minShard && player.shardCost <= maxShard);
 
     // Apply Position filter
     const selectedPositionNodes = document.querySelectorAll('#position-filter-panel input[type="checkbox"]:checked');
@@ -402,13 +613,21 @@ function sortPlayers(data) {
 
 // Function to save current settings to localStorage
 function saveSettings() {
+    // Ensure sliders are initialized before trying to get their values
+    if (!ovrSlider || !shardCostSlider) {
+        console.warn("Sliders not initialized, cannot save settings yet.");
+        return;
+    }
     const settings = {
-        ovrFilter: document.getElementById('ovr-filter').value,
-        minShardFilter: document.getElementById('min-shard-filter').value,
-        maxShardFilter: document.getElementById('max-shard-filter').value,
+        ovrSliderValues: ovrSlider.get(),
+        shardCostSliderValues: shardCostSlider.get(),
         selectedPositions: Array.from(document.querySelectorAll('#position-filter-panel input[type="checkbox"]:checked')).map(cb => cb.value),
         sortBy: document.getElementById('sort-by').value,
-        sortOrder: document.getElementById('sort-order').value
+        sortOrder: document.getElementById('sort-order').value,
+        // Player Pick Settings
+        playerPickActive: playerPickActive,
+        totalShardsAvailable: totalShardsAvailable,
+        selectedPlayersNos: selectedPlayers.map(p => p.no) // Save only IDs for lighter storage
     };
     localStorage.setItem('avsSettings', JSON.stringify(settings));
 }
@@ -418,11 +637,44 @@ function loadSettings() {
     const savedSettings = localStorage.getItem('avsSettings');
     if (savedSettings) {
         const settings = JSON.parse(savedSettings);
-        document.getElementById('ovr-filter').value = settings.ovrFilter;
-        document.getElementById('min-shard-filter').value = settings.minShardFilter || "0";
-        document.getElementById('min-shard-value').textContent = settings.minShardFilter || "0";
-        document.getElementById('max-shard-filter').value = settings.maxShardFilter || "1500";
-        document.getElementById('max-shard-value').textContent = settings.maxShardFilter || "1500";
+
+        // Ensure sliders are initialized before trying to set their values
+        if (ovrSlider && settings.ovrSliderValues) {
+            ovrSlider.set(settings.ovrSliderValues);
+            // Ensure display updates after setting slider values
+            const ovrVals = ovrSlider.get();
+            document.getElementById('min-ovr-value-display').textContent = ovrVals[0];
+            document.getElementById('max-ovr-value-display').textContent = ovrVals[1];
+        } else if (settings.ovrFilter) { // Fallback for old settings structure if needed
+            // This part is for transitioning from old settings.
+            // You might want to remove it after users have migrated.
+            const ovrs = players.map(p => p.ovr);
+            const minOvr = Math.min(...ovrs);
+            const maxOvr = Math.max(...ovrs);
+            if (settings.ovrFilter === 'all') {
+                ovrSlider.set([minOvr, maxOvr]);
+            } else if (settings.ovrFilter.includes('-')) {
+                ovrSlider.set(settings.ovrFilter.split('-').map(Number));
+            } else {
+                ovrSlider.set([Number(settings.ovrFilter), Number(settings.ovrFilter)]);
+            }
+            const currentOvrValues = ovrSlider.get();
+            document.getElementById('min-ovr-value-display').textContent = currentOvrValues[0];
+            document.getElementById('max-ovr-value-display').textContent = currentOvrValues[1];
+        }
+
+
+        if (shardCostSlider && settings.shardCostSliderValues) {
+            shardCostSlider.set(settings.shardCostSliderValues);
+            document.getElementById('min-shard-value-display').textContent = settings.shardCostSliderValues[0];
+            document.getElementById('max-shard-value-display').textContent = settings.shardCostSliderValues[1];
+        } else if (settings.minShardFilter !== undefined && settings.maxShardFilter !== undefined) { // Fallback for old settings
+            shardCostSlider.set([Number(settings.minShardFilter), Number(settings.maxShardFilter)]);
+            const currentShardValues = shardCostSlider.get();
+            document.getElementById('min-shard-value-display').textContent = currentShardValues[0];
+            document.getElementById('max-shard-value-display').textContent = currentShardValues[1];
+        }
+
 
         if (settings.selectedPositions && Array.isArray(settings.selectedPositions)) {
             settings.selectedPositions.forEach(positionValue => {
@@ -433,8 +685,35 @@ function loadSettings() {
             });
         }
 
-        document.getElementById('sort-by').value = settings.sortBy;
-        document.getElementById('sort-order').value = settings.sortOrder;
+        document.getElementById('sort-by').value = settings.sortBy || 'name';
+        document.getElementById('sort-order').value = settings.sortOrder || 'asc';
+
+        // Load Player Pick Settings
+        if (settings.playerPickActive !== undefined) {
+            playerPickActive = settings.playerPickActive;
+            document.getElementById('player-pick-toggle').checked = playerPickActive;
+            if (playerPickActive) {
+                document.getElementById('player-pick-controls').classList.remove('hidden');
+                totalShardsAvailable = parseInt(settings.totalShardsAvailable) || 0;
+                document.getElementById('total-shards-input').value = totalShardsAvailable;
+
+                if (settings.selectedPlayersNos && Array.isArray(settings.selectedPlayersNos)) {
+                    selectedPlayers = settings.selectedPlayersNos.map(no => players.find(p => p.no === no)).filter(p => p); // Find full player objects
+                } else {
+                    selectedPlayers = [];
+                }
+
+                const selectedCost = selectedPlayers.reduce((sum, p) => sum + p.shardCost, 0);
+                remainingShards = totalShardsAvailable - selectedCost;
+                updatePlayerPickSummary();
+            } else {
+                document.getElementById('player-pick-controls').classList.add('hidden');
+                selectedPlayers = [];
+                totalShardsAvailable = 0;
+                remainingShards = 0;
+                updatePlayerPickSummary();
+            }
+        }
     }
 }
 
@@ -450,12 +729,15 @@ function savePreset() {
     const preset = {
         name: presetName,
         settings: {
-            ovrFilter: document.getElementById('ovr-filter').value,
-            minShardFilter: document.getElementById('min-shard-filter').value,
-            maxShardFilter: document.getElementById('max-shard-filter').value,
+            ovrSliderValues: ovrSlider.get(),
+            shardCostSliderValues: shardCostSlider.get(),
             selectedPositions: Array.from(document.querySelectorAll('#position-filter-panel input[type="checkbox"]:checked')).map(cb => cb.value),
             sortBy: document.getElementById('sort-by').value,
-            sortOrder: document.getElementById('sort-order').value
+            sortOrder: document.getElementById('sort-order').value,
+            // Player Pick Settings for Presets
+            playerPickActive: playerPickActive,
+            totalShardsAvailable: totalShardsAvailable,
+            selectedPlayersNos: selectedPlayers.map(p => p.no)
         }
     };
 
@@ -500,31 +782,58 @@ function loadPresets() {
         button.addEventListener('click', function() {
             const presetName = this.getAttribute('data-name');
             const presets = JSON.parse(localStorage.getItem('avsPresets')) || [];
-            const preset = presets.find(p => p.name === presetName);
+            const presetToLoad = presets.find(p => p.name === presetName);
 
-            if (preset) {
-                document.getElementById('ovr-filter').value = preset.settings.ovrFilter;
-                document.getElementById('min-shard-filter').value = preset.settings.minShardFilter || "0";
-                document.getElementById('min-shard-value').textContent = preset.settings.minShardFilter || "0";
-                document.getElementById('max-shard-filter').value = preset.settings.maxShardFilter || "1500";
-                document.getElementById('max-shard-value').textContent = preset.settings.maxShardFilter || "1500";
-                document.getElementById('sort-by').value = preset.settings.sortBy;
-                document.getElementById('sort-order').value = preset.settings.sortOrder;
+            if (presetToLoad) {
+                const { settings } = presetToLoad;
+                // Load slider values
+                if (ovrSlider && settings.ovrSliderValues) {
+                    ovrSlider.set(settings.ovrSliderValues);
+                }
+                if (shardCostSlider && settings.shardCostSliderValues) {
+                    shardCostSlider.set(settings.shardCostSliderValues);
+                }
 
-                // Clear existing position checkboxes
+                // Load sort order
+                document.getElementById('sort-by').value = settings.sortBy || 'name';
+                document.getElementById('sort-order').value = settings.sortOrder || 'asc';
+
+                // Clear and load position filter settings
                 document.querySelectorAll('#position-filter-panel input[type="checkbox"]').forEach(cb => cb.checked = false);
-                // Load position filter settings from preset
-                if (preset.settings.selectedPositions && Array.isArray(preset.settings.selectedPositions)) {
-                    preset.settings.selectedPositions.forEach(positionValue => {
+                if (settings.selectedPositions && Array.isArray(settings.selectedPositions)) {
+                    settings.selectedPositions.forEach(positionValue => {
                         const checkbox = document.querySelector(`#position-filter-panel input[value="${positionValue}"]`);
-                        if (checkbox) {
-                            checkbox.checked = true;
-                        }
+                        if (checkbox) checkbox.checked = true;
                     });
                 }
 
-                updateDisplay(); // Call updateDisplay to render cards
-                saveSettings();
+                // Load Player Pick Settings from preset
+                if (settings.playerPickActive !== undefined) {
+                    playerPickActive = settings.playerPickActive;
+                    document.getElementById('player-pick-toggle').checked = playerPickActive;
+                    if (playerPickActive) {
+                        document.getElementById('player-pick-controls').classList.remove('hidden');
+                        totalShardsAvailable = parseInt(settings.totalShardsAvailable) || 0;
+                        document.getElementById('total-shards-input').value = totalShardsAvailable;
+
+                        if (settings.selectedPlayersNos && Array.isArray(settings.selectedPlayersNos)) {
+                            selectedPlayers = settings.selectedPlayersNos.map(no => players.find(p => p.no === no)).filter(p => p);
+                        } else {
+                            selectedPlayers = [];
+                        }
+                        const selectedCost = selectedPlayers.reduce((sum, p) => sum + p.shardCost, 0);
+                        remainingShards = totalShardsAvailable - selectedCost;
+                    } else {
+                        document.getElementById('player-pick-controls').classList.add('hidden');
+                        selectedPlayers = [];
+                        totalShardsAvailable = 0;
+                        remainingShards = 0;
+                    }
+                    updatePlayerPickSummary();
+                }
+
+                updateDisplay(); // Call updateDisplay to render cards with new settings
+                saveSettings(); // Save these loaded preset settings as current settings
             }
         });
     });
@@ -587,6 +896,53 @@ document.getElementById('sort-order').addEventListener('change', () => {
     saveSettings();
 });
 
+// --- Player Pick Event Listeners ---
+const playerPickToggle = document.getElementById('player-pick-toggle');
+const playerPickControls = document.getElementById('player-pick-controls');
+const totalShardsInput = document.getElementById('total-shards-input');
+
+playerPickToggle.addEventListener('change', function() {
+    playerPickActive = this.checked;
+    if (playerPickActive) {
+        playerPickControls.classList.remove('hidden');
+        // When enabling, if there's a value in totalShardsInput, use it.
+        // Otherwise, remainingShards is based on 0 total until user types.
+        const currentTotal = parseInt(totalShardsInput.value) || 0;
+        totalShardsAvailable = currentTotal;
+        // Recalculate remaining based on current selections and new total
+        const selectedCost = selectedPlayers.reduce((sum, p) => sum + p.shardCost, 0);
+        remainingShards = totalShardsAvailable - selectedCost;
+
+    } else {
+        playerPickControls.classList.add('hidden');
+        // Optionally reset selected players when disabling, or keep them for re-enabling.
+        // For now, let's reset for simplicity.
+        selectedPlayers = [];
+        totalShardsAvailable = 0;
+        remainingShards = 0;
+        totalShardsInput.value = ''; // Clear the input
+    }
+    updatePlayerPickSummary();
+    updateDisplay(); // Re-render cards with new player pick state
+    saveSettings();
+});
+
+totalShardsInput.addEventListener('input', function() {
+    totalShardsAvailable = parseInt(this.value) || 0;
+    const selectedCost = selectedPlayers.reduce((sum, p) => sum + p.shardCost, 0);
+    remainingShards = totalShardsAvailable - selectedCost;
+
+    // If remaining shards becomes negative due to changing total,
+    // we might need a strategy (e.g., deselect players or show error).
+    // For now, it will just show a negative remaining value.
+    // Cards will be correctly disabled by renderPlayerCards.
+
+    updatePlayerPickSummary();
+    updateDisplay(); // Re-render cards to reflect new remainingShards and possibly disable more cards
+    saveSettings();
+});
+
+
 // Event listeners for table headers (still present for consistency with sorting options)
 // Note: These event listeners are still present but will not directly impact the UI if the table headers
 // themselves are not visible or clickable. Their functionality is now mirrored by the select elements.
@@ -640,6 +996,7 @@ document.getElementById('position-filter-toggle').addEventListener('click', togg
 
 // Load settings and presets on page load
 window.addEventListener('load', () => {
+    initializeSliders(); // Initialize the new range sliders
     populatePositionFilter(); // Populate position filter options
     loadSettings(); // Load saved settings (this will check relevant position checkboxes)
     loadPresets();
