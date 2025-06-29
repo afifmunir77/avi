@@ -272,11 +272,6 @@ function populatePositionFilter() {
 
     uniquePositions.forEach(position => {
         const checkboxId = `pos-${position.toLowerCase().replace(/\s+/g, '-')}`;
-        const-checkbox-label-wrapper div {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px; /* Add some space between checkboxes */
-        }
         const wrapper = document.createElement('div');
         wrapper.className = 'flex items-center mb-2'; // Tailwind classes for layout
 
